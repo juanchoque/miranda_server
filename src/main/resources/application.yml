@@ -1,0 +1,32 @@
+server:
+  port: 8001
+
+logging:
+  level:
+    #ROOT: DEBUG
+    #org.springframework.web: ERROR
+    com.st.tracker: DEBUG
+    #com.st.tracker.sockets.core: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+  file: Logs/debug.log
+  #file: D:/logs/debug.log
+
+mina:
+  port: 5000
+
+spring:
+   config:
+      name:  miranda_server
+   application:
+      name:  miranda_server
+   jpa:
+      show-sql: true
+   datasource:
+      driver-class-name: com.mysql.jdbc.Driver
+      username: root
+      password:
+      url: jdbc:mysql://localhost:3306/mirandadb?autoReconnect=true&useSSL=true
+
