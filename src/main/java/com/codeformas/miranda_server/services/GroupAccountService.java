@@ -2,6 +2,7 @@ package com.codeformas.miranda_server.services;
 
 import com.codeformas.miranda_server.model.domain.GroupAccount;
 import com.codeformas.miranda_server.repository.GroupAccountRepository;
+import com.codeformas.miranda_server.util.ConstantMiranda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +23,22 @@ public class GroupAccountService implements IGroupAccountService {
     @Override
     public HashMap listAll() {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         try {
             List<GroupAccount> listGroupAccounts = new ArrayList<>();
-            groupAccountRepository.findAll().forEach(listGroupAccounts::add); //fun with Java 8
-            resultMap.put("LIST_GROUP_ACCOUNTS", listGroupAccounts);
+            this.groupAccountRepository.findAll().forEach(listGroupAccounts::add); //fun with Java 8
+            if(listGroupAccounts != null){
+                resultMap.put(ConstantMiranda.OBJECT, listGroupAccounts);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -42,19 +46,23 @@ public class GroupAccountService implements IGroupAccountService {
     @Override
     public HashMap getById(Integer id) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         GroupAccount groupAccount = null;
         try {
             groupAccount = groupAccountRepository.findOne(id);
-            resultMap.put("GROUP_ACCOUNT", groupAccount);
+            if(groupAccount != null){
+                resultMap.put(ConstantMiranda.OBJECT, groupAccount);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            messageTemp = er.getMessage().toString();
+            status = false;
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -62,7 +70,7 @@ public class GroupAccountService implements IGroupAccountService {
     @Override
     public HashMap saveOrUpdate(GroupAccount groupAccount) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         GroupAccount rGroupAccount = null;
@@ -77,50 +85,58 @@ public class GroupAccountService implements IGroupAccountService {
                 rGroupAccount = groupAccount;
             }
             this.groupAccountRepository.save(rGroupAccount);
+
+            resultMap.put(ConstantMiranda.OBJECT, rGroupAccount);
+            status = true;
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
         return resultMap;
     }
 
     @Override
     public HashMap delete(GroupAccount groupAccount) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
         try {
-            groupAccountRepository.delete(groupAccount);
+            this.groupAccountRepository.delete(groupAccount);
+            status = true;
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toString();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
         return resultMap;
     }
 
     @Override
     public HashMap findByImei(String imei) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         List<GroupAccount>listGroupsAccounts = new ArrayList<>();
         try {
             listGroupsAccounts = groupAccountRepository.findByImei(imei);
-            if(listGroupsAccounts == null){
-                listGroupsAccounts = new ArrayList<>();
+            if(listGroupsAccounts != null){
+                resultMap.put(ConstantMiranda.OBJECT, listGroupsAccounts);
+                status = true;
             }
-            resultMap.put("LIST_GROUP_ACCOUNTS", listGroupsAccounts);
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toString();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
         return resultMap;
     }
 

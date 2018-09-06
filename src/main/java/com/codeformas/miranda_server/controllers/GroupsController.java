@@ -1,8 +1,10 @@
 package com.codeformas.miranda_server.controllers;
 
 import com.codeformas.miranda_server.model.domain.Groups;
+import com.codeformas.miranda_server.model.domain.MessageError;
 import com.codeformas.miranda_server.services.GroupsService;
 import com.codeformas.miranda_server.util.ConstantMiranda;
+import com.codeformas.miranda_server.util.UtilMiranda;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class GroupsController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> listGroups(@RequestBody Groups groups) {
         String respuestaJson = "";
         HttpStatus httpStatus = HttpStatus.OK;
@@ -34,9 +36,10 @@ public class GroupsController {
         List<Groups> listGroups = new ArrayList<Groups>();
 
         HashMap resHashMap = null;
-        String continueHash = "";
+        boolean continueHash = false;
+        String messageHash = "";
+        UtilMiranda utilMiranda = new UtilMiranda();
 
-        //ObjectMapper gson = new ObjectMapper();
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .setDateFormat(ConstantMiranda.FORMAT_DATE_YYYY_MM_DD_HH_MM_SS)
@@ -44,17 +47,22 @@ public class GroupsController {
 
         try {
             resHashMap = this.groupsService.listAll();
-            continueHash = (String) resHashMap.get("CONTINUE_STATUS");
-            if (continueHash.equals(ConstantMiranda.CONTINUE_STATUS_TRUE)) {
-                listGroups = (List<Groups>) resHashMap.get("LIST_GROUPS");
+            continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
+            if (continueHash) {
+                listGroups = (List<Groups>) resHashMap.get(ConstantMiranda.OBJECT);
                 respuestaJson = gson.toJson(listGroups);
             } else {
+                messageHash = (String)resHashMap.get(ConstantMiranda.MESSAGE);
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+                respuestaJson = gson.toJson(messages);
             }
 
         } catch (Exception ex) {
+            messageHash = ex.getMessage();
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            ex.printStackTrace();
+            MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+            respuestaJson = gson.toJson(messages);
         }
         response = new ResponseEntity<Object>(respuestaJson, httpStatus);
 
@@ -67,14 +75,16 @@ public class GroupsController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/add", method= RequestMethod.POST, produces="application/json")
+    @RequestMapping(value="/add", method= RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> addGroups(@RequestBody Groups groups) {
         String respuestaJson = "";
         HttpStatus httpStatus = HttpStatus.OK;
 
         ResponseEntity<Object> response = null;
         HashMap resHashMap = null;
-        String continueHash = "";
+        boolean continueHash = false;
+        String messageHash = "";
+        UtilMiranda utilMiranda = new UtilMiranda();
 
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -83,15 +93,21 @@ public class GroupsController {
 
         try {
             resHashMap = this.groupsService.saveOrUpdate(groups);
-            continueHash = (String)resHashMap.get("CONTINUE_STATUS");
-            if(continueHash.equals("TRUE")){
+            continueHash = (boolean)resHashMap.get(ConstantMiranda.STATUS);
+            if(continueHash){
                 respuestaJson = gson.toJson(groups, Groups.class);
             }
             else{
+                messageHash = (String)resHashMap.get(ConstantMiranda.MESSAGE);
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+                respuestaJson = gson.toJson(messages);
             }
         }catch (Exception ex){
+            messageHash = ex.getMessage();
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+            respuestaJson = gson.toJson(messages);
         }
         response = new ResponseEntity<Object>(respuestaJson, httpStatus);
 
@@ -99,7 +115,7 @@ public class GroupsController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> deleteGroups(@RequestBody Groups groups) {
         String respuestaJson = "";
         HttpStatus httpStatus = HttpStatus.OK;
@@ -112,18 +128,27 @@ public class GroupsController {
                 .create();
 
         HashMap resHashMap = null;
-        String continueHash = "";
+        boolean continueHash = false;
+        String messageHash = "";
+        UtilMiranda utilMiranda = new UtilMiranda();
 
         try {
             resHashMap = this.groupsService.delete(groups);
-            continueHash = (String) resHashMap.get("CONTINUE_STATUS");
-            if (continueHash.equals("TRUE")) {
+            continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
+            if (continueHash) {
                 respuestaJson = gson.toJson(groups, Groups.class);
-            } else {
+            }
+            else {
+                messageHash = (String)resHashMap.get(ConstantMiranda.MESSAGE);
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+                respuestaJson = gson.toJson(messages);
             }
         } catch (Exception ex) {
+            messageHash = ex.getMessage();
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+            respuestaJson = gson.toJson(messages);
         }
         response = new ResponseEntity<Object>(respuestaJson, httpStatus);
 

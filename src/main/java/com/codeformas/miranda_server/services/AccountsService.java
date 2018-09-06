@@ -2,6 +2,7 @@ package com.codeformas.miranda_server.services;
 
 import com.codeformas.miranda_server.model.domain.Accounts;
 import com.codeformas.miranda_server.repository.AccountsRepository;
+import com.codeformas.miranda_server.util.ConstantMiranda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +23,23 @@ public class AccountsService implements IAccountsService {
     @Override
     public HashMap listAll() {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         try {
             List<Accounts> listAccounts = new ArrayList<>();
-            accountsRepository.findAll().forEach(listAccounts::add); //fun with Java 8
-            resultMap.put("LIST_ACCOUNTS", listAccounts);
+            this.accountsRepository.findAll().forEach(listAccounts::add); //fun with Java 8
+            if(listAccounts != null){
+                resultMap.put(ConstantMiranda.OBJECT, listAccounts);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toLowerCase();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -42,19 +47,23 @@ public class AccountsService implements IAccountsService {
     @Override
     public HashMap getById(Integer id) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         Accounts accounts = null;
         try {
-            accounts = accountsRepository.findOne(id);
-            resultMap.put("ACCOUNTS", accounts);
+            accounts = this.accountsRepository.findOne(id);
+            if(accounts != null){
+                resultMap.put(ConstantMiranda.OBJECT, accounts);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toLowerCase();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -62,32 +71,34 @@ public class AccountsService implements IAccountsService {
     @Override
     public HashMap saveOrUpdate(Accounts accounts) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
         try {
-            accountsRepository.save(accounts);
+            this.accountsRepository.save(accounts);
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toLowerCase();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
         return resultMap;
     }
 
     @Override
     public HashMap delete(Accounts accounts) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
         try {
-            accountsRepository.delete(accounts);
+            this.accountsRepository.delete(accounts);
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toString();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
         return resultMap;
     }
 

@@ -2,6 +2,7 @@ package com.codeformas.miranda_server.services;
 
 import com.codeformas.miranda_server.model.domain.Ubication;
 import com.codeformas.miranda_server.repository.UbicationRepository;
+import com.codeformas.miranda_server.util.ConstantMiranda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +23,23 @@ public class UbicationService implements IUbicationService {
     @Override
     public HashMap listAll() {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         try {
             List<Ubication> listUbications = new ArrayList<>();
-            ubicationRepository.findAll().forEach(listUbications::add); //fun with Java 8
-            resultMap.put("LIST_UBICATIONS", listUbications);
+            this.ubicationRepository.findAll().forEach(listUbications::add); //fun with Java 8
+            if(listUbications != null){
+                resultMap.put(ConstantMiranda.OBJECT, listUbications);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -42,19 +47,23 @@ public class UbicationService implements IUbicationService {
     @Override
     public HashMap getById(Long id) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         Ubication ubication = null;
         try {
-            ubication = ubicationRepository.findOne(id);
-            resultMap.put("UBICATION", ubication);
+            ubication = this.ubicationRepository.findOne(id);
+            if(ubication != null){
+                resultMap.put(ConstantMiranda.OBJECT, ubication);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -62,32 +71,38 @@ public class UbicationService implements IUbicationService {
     @Override
     public HashMap saveOrUpdate(Ubication ubication) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
         try {
-            ubicationRepository.save(ubication);
+            this.ubicationRepository.save(ubication);
+            status = true;
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
         return resultMap;
     }
 
     @Override
     public HashMap delete(Ubication ubication) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = true;
         String messageTemp = "";
         try {
-            ubicationRepository.delete(ubication);
+            this.ubicationRepository.delete(ubication);
+            status = true;
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
         return resultMap;
     }
 

@@ -3,6 +3,7 @@ package com.codeformas.miranda_server.services;
 import com.codeformas.miranda_server.model.domain.GroupAccount;
 import com.codeformas.miranda_server.model.domain.Groups;
 import com.codeformas.miranda_server.repository.GroupsRepository;
+import com.codeformas.miranda_server.util.ConstantMiranda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,39 +26,45 @@ public class GroupsService implements IGroupsService {
     @Override
     public HashMap listAll() {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         try {
             List<Groups> listGroups = new ArrayList<>();
             this.groupsRepository.findAll().forEach(listGroups::add); //fun with Java 8
-            resultMap.put("LIST_GROUPS", listGroups);
+            if(listGroups != null){
+                resultMap.put(ConstantMiranda.OBJECT, listGroups);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toString();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
-
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
         return resultMap;
     }
 
     @Override
     public HashMap getById(Integer id) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         Groups groups = null;
         try {
             groups = this.groupsRepository.findOne(id);
-            resultMap.put("GROUPS", groups);
+            if(groups != null){
+                resultMap.put(ConstantMiranda.OBJECT, groups);
+                status = true;
+            }
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
 
         return resultMap;
     }
@@ -65,7 +72,7 @@ public class GroupsService implements IGroupsService {
     @Override
     public HashMap saveOrUpdate(Groups groups) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
 
         Groups rGroups = null;
@@ -109,29 +116,38 @@ public class GroupsService implements IGroupsService {
                 groups.getGroupAccountList().set(i, groupAccount);
                 this.groupAccountService.saveOrUpdate(groupAccount);
             }
+
+            resultMap.put(ConstantMiranda.OBJECT, rGroups);
+            status = true;
+
         }catch (Exception er){
-            continueMap = "FALSE";
-            er.printStackTrace();
+            status = true;
+            messageTemp  = er.getMessage().toString();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
         return resultMap;
     }
 
     @Override
     public HashMap delete(Groups groups) {
         HashMap resultMap = new HashMap();
-        String continueMap = "TRUE";
+        boolean status = false;
         String messageTemp = "";
         try {
             this.groupsRepository.delete(groups);
+            resultMap.put(ConstantMiranda.OBJECT, groups);
+            status = true;
         }catch (Exception er){
-            continueMap = "FALSE";
+            status = false;
+            messageTemp = er.getMessage().toString();
         }
 
-        resultMap.put("CONTINUE_STATUS", continueMap);
-        resultMap.put("MESSAGE", messageTemp);
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
         return resultMap;
     }
 
