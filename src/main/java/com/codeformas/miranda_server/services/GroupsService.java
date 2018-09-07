@@ -1,5 +1,6 @@
 package com.codeformas.miranda_server.services;
 
+import com.codeformas.miranda_server.model.domain.Accounts;
 import com.codeformas.miranda_server.model.domain.GroupAccount;
 import com.codeformas.miranda_server.model.domain.Groups;
 import com.codeformas.miranda_server.repository.GroupsRepository;
@@ -101,6 +102,7 @@ public class GroupsService implements IGroupsService {
                             }
                         }
                     }
+
                 }
             }
             else{
@@ -140,6 +142,30 @@ public class GroupsService implements IGroupsService {
             this.groupsRepository.delete(groups);
             resultMap.put(ConstantMiranda.OBJECT, groups);
             status = true;
+        }catch (Exception er){
+            status = false;
+            messageTemp = er.getMessage().toString();
+        }
+
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
+        return resultMap;
+    }
+
+    @Override
+    public HashMap listAllByAcount(Accounts accounts) {
+        HashMap resultMap = new HashMap();
+        boolean status = false;
+        String messageTemp = "";
+
+        try {
+            List<GroupAccount> listGroups = new ArrayList<>();
+            this.groupsRepository.findAllByAccount(accounts.getId()).forEach(listGroups::add); //fun with Java 8
+            if(listGroups != null){
+                resultMap.put(ConstantMiranda.OBJECT, listGroups);
+                status = true;
+            }
         }catch (Exception er){
             status = false;
             messageTemp = er.getMessage().toString();

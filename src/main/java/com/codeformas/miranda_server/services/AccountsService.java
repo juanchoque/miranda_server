@@ -75,6 +75,7 @@ public class AccountsService implements IAccountsService {
         String messageTemp = "";
         try {
             this.accountsRepository.save(accounts);
+            status = true;
         }catch (Exception er){
             status = false;
             messageTemp = er.getMessage().toLowerCase();
@@ -92,6 +93,7 @@ public class AccountsService implements IAccountsService {
         String messageTemp = "";
         try {
             this.accountsRepository.delete(accounts);
+            status = true;
         }catch (Exception er){
             status = false;
             messageTemp = er.getMessage().toString();

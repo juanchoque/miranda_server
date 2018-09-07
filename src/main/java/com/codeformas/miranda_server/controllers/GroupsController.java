@@ -1,5 +1,6 @@
 package com.codeformas.miranda_server.controllers;
 
+import com.codeformas.miranda_server.model.domain.Accounts;
 import com.codeformas.miranda_server.model.domain.Groups;
 import com.codeformas.miranda_server.model.domain.MessageError;
 import com.codeformas.miranda_server.services.GroupsService;
@@ -47,6 +48,49 @@ public class GroupsController {
 
         try {
             resHashMap = this.groupsService.listAll();
+            continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
+            if (continueHash) {
+                listGroups = (List<Groups>) resHashMap.get(ConstantMiranda.OBJECT);
+                respuestaJson = gson.toJson(listGroups);
+            } else {
+                messageHash = (String)resHashMap.get(ConstantMiranda.MESSAGE);
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+                respuestaJson = gson.toJson(messages);
+            }
+
+        } catch (Exception ex) {
+            messageHash = ex.getMessage();
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);
+            respuestaJson = gson.toJson(messages);
+        }
+        response = new ResponseEntity<Object>(respuestaJson, httpStatus);
+
+        return response;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/listbyaccount", method = RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
+    public ResponseEntity<Object> listGroupsByAccount(@RequestBody Accounts accounts) {
+        String respuestaJson = "";
+        HttpStatus httpStatus = HttpStatus.OK;
+        ResponseEntity<Object> response = null;
+
+        List<Groups> listGroups = new ArrayList<Groups>();
+
+        HashMap resHashMap = null;
+        boolean continueHash = false;
+        String messageHash = "";
+        UtilMiranda utilMiranda = new UtilMiranda();
+
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .setDateFormat(ConstantMiranda.FORMAT_DATE_YYYY_MM_DD_HH_MM_SS)
+                .create();
+
+        try {
+            resHashMap = this.groupsService.listAllByAcount(accounts);
             continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
             if (continueHash) {
                 listGroups = (List<Groups>) resHashMap.get(ConstantMiranda.OBJECT);

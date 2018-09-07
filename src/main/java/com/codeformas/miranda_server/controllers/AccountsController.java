@@ -82,7 +82,10 @@ public class AccountsController {
         HttpStatus httpStatus = HttpStatus.OK;
 
         ResponseEntity<Object> response = null;
-        Gson gson = new GsonBuilder().setDateFormat(ConstantMiranda.FORMAT_DATE_YYYY_MM_DD_HH_MM_SS).create();
+        Gson gson = new GsonBuilder()
+                .setDateFormat(ConstantMiranda.FORMAT_DATE_YYYY_MM_DD_HH_MM_SS)
+                .create();
+
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
