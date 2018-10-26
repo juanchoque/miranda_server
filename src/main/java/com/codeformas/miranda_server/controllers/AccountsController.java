@@ -46,7 +46,9 @@ public class AccountsController {
         UtilMiranda utilMiranda = new UtilMiranda();
 
         try {
+            System.out.println(">>>>>>>>>>>>>>>>>" + accountsService.listAll());
             resHashMap = this.accountsService.listAll();
+            System.out.println(">>>>Esto es nulo>>>>>>>>" + resHashMap);
             continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
             if (continueHash) {
                 listAccounts = (List<Accounts>) resHashMap.get(ConstantMiranda.OBJECT);
@@ -59,6 +61,7 @@ public class AccountsController {
                 respuestaJson = gson.toJson(messages);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             messageHash = ex.getMessage();
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             MessageError messages = utilMiranda.getFormatMessage(messageHash, httpStatus);

@@ -1,14 +1,12 @@
 package com.codeformas.miranda_server.util;
 
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-
 public class Juan {
     public static void main(String args[]){
         String password = "H94BgwFuMXeMZuF7orlAFg==";
-        System.out.println("==============>" + decrypt(password));
+        //System.out.println("==============>" + decrypt(password));
     }
 
-    public static String encrypt(String clave){
+    /*public static String encrypt(String clave){
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setAlgorithm("PBEWithMD5AndDES");
         encryptor.setPassword("segst");
@@ -21,5 +19,5 @@ public class Juan {
         encryptor.setAlgorithm("PBEWithMD5AndDES");
         encryptor.setPassword("segst");
         return encryptor.decrypt(clave);
-    }
+    }*/
 }
