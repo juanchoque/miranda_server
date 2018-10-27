@@ -7,6 +7,8 @@ import com.codeformas.miranda_server.util.ConstantMiranda;
 import com.codeformas.miranda_server.util.UtilMiranda;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/accounts")
+@Api(value = ConstantMiranda.VALUE_ACCOUNTS_CONTROLLER, description = ConstantMiranda.DESC_ACCOUNTS_CONTROLLER)
 public class AccountsController {
     private AccountsService accountsService;
 
@@ -27,6 +30,7 @@ public class AccountsController {
     }
 
     @ResponseBody
+    @ApiOperation(value = ConstantMiranda.DESC_LIST_ACCOUNTS)
     @RequestMapping(value = "/list", method = RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> listAccounts(@RequestBody Accounts accounts) {
         HttpStatus httpStatus = HttpStatus.OK;
