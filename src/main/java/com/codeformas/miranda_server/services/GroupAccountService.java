@@ -21,7 +21,31 @@ public class GroupAccountService implements IGroupAccountService {
 
 
     @Override
-    public HashMap listAll() {
+    public HashMap findByImei(String imei) {
+        HashMap resultMap = new HashMap();
+        boolean status = false;
+        String messageTemp = "";
+
+        List<GroupAccount>listGroupsAccounts = new ArrayList<>();
+        try {
+            listGroupsAccounts = groupAccountRepository.findByImei(imei);
+            if(listGroupsAccounts != null){
+                resultMap.put(ConstantMiranda.OBJECT, listGroupsAccounts);
+                status = true;
+            }
+        }catch (Exception er){
+            status = false;
+            messageTemp = er.getMessage().toString();
+        }
+
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
+        return resultMap;
+    }
+
+    @Override
+    public HashMap list(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
@@ -44,14 +68,14 @@ public class GroupAccountService implements IGroupAccountService {
     }
 
     @Override
-    public HashMap getById(Integer id) {
+    public HashMap getById(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
 
         GroupAccount groupAccount = null;
         try {
-            groupAccount = groupAccountRepository.findOne(id);
+            groupAccount = groupAccountRepository.findOne(((GroupAccount)o).getId());
             if(groupAccount != null){
                 resultMap.put(ConstantMiranda.OBJECT, groupAccount);
                 status = true;
@@ -68,11 +92,12 @@ public class GroupAccountService implements IGroupAccountService {
     }
 
     @Override
-    public HashMap saveOrUpdate(GroupAccount groupAccount) {
+    public HashMap saveUpdate(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
 
+        GroupAccount groupAccount = (GroupAccount) o;
         GroupAccount rGroupAccount = null;
         try {
             rGroupAccount = this.groupAccountRepository.getByAccountGroup(groupAccount.getAccounts().getId(), groupAccount.getGroups().getId());
@@ -98,12 +123,12 @@ public class GroupAccountService implements IGroupAccountService {
     }
 
     @Override
-    public HashMap delete(GroupAccount groupAccount) {
+    public HashMap delete(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
         try {
-            this.groupAccountRepository.delete(groupAccount);
+            this.groupAccountRepository.delete((GroupAccount) o);
             status = true;
         }catch (Exception er){
             status = false;
@@ -115,29 +140,4 @@ public class GroupAccountService implements IGroupAccountService {
 
         return resultMap;
     }
-
-    @Override
-    public HashMap findByImei(String imei) {
-        HashMap resultMap = new HashMap();
-        boolean status = false;
-        String messageTemp = "";
-
-        List<GroupAccount>listGroupsAccounts = new ArrayList<>();
-        try {
-            listGroupsAccounts = groupAccountRepository.findByImei(imei);
-            if(listGroupsAccounts != null){
-                resultMap.put(ConstantMiranda.OBJECT, listGroupsAccounts);
-                status = true;
-            }
-        }catch (Exception er){
-            status = false;
-            messageTemp = er.getMessage().toString();
-        }
-
-        resultMap.put(ConstantMiranda.STATUS, status);
-        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
-
-        return resultMap;
-    }
-
 }

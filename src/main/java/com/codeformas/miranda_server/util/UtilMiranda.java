@@ -3,7 +3,20 @@ package com.codeformas.miranda_server.util;
 import com.codeformas.miranda_server.model.domain.MessageError;
 import org.springframework.http.HttpStatus;
 
-public class UtilMiranda {
+public final class UtilMiranda {
+    private static UtilMiranda utilMiranda;
+
+    private UtilMiranda() {
+
+    }
+
+    public static UtilMiranda getInstance(){
+        if(utilMiranda == null){
+            utilMiranda = new UtilMiranda();
+        }
+        return utilMiranda;
+    }
+
     public MessageError getFormatMessage(String messageHash, HttpStatus httpStatus){
         MessageError messages = null;
 

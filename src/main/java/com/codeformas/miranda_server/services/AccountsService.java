@@ -19,11 +19,12 @@ public class AccountsService implements IAccountsService {
         this.accountsRepository = accountsRepository;
     }
 
-
     @Override
-    public HashMap listAll() {
+    public HashMap list(Object o) {
         HashMap resultMap = new HashMap();
+
         boolean status = false;
+
         String messageTemp = "";
 
         try {
@@ -45,14 +46,16 @@ public class AccountsService implements IAccountsService {
     }
 
     @Override
-    public HashMap getById(Integer id) {
+    public HashMap getById(Object o) {
         HashMap resultMap = new HashMap();
+
         boolean status = false;
+
         String messageTemp = "";
 
         Accounts accounts = null;
         try {
-            accounts = this.accountsRepository.findOne(id);
+            accounts = this.accountsRepository.findOne(((Accounts)o).getId());
             if(accounts != null){
                 resultMap.put(ConstantMiranda.OBJECT, accounts);
                 status = true;
@@ -69,12 +72,12 @@ public class AccountsService implements IAccountsService {
     }
 
     @Override
-    public HashMap saveOrUpdate(Accounts accounts) {
+    public HashMap saveUpdate(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
         try {
-            this.accountsRepository.save(accounts);
+            this.accountsRepository.save((Accounts) o);
             status = true;
         }catch (Exception er){
             status = false;
@@ -87,12 +90,12 @@ public class AccountsService implements IAccountsService {
     }
 
     @Override
-    public HashMap delete(Accounts accounts) {
+    public HashMap delete(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
         try {
-            this.accountsRepository.delete(accounts);
+            this.accountsRepository.delete((Accounts) o);
             status = true;
         }catch (Exception er){
             status = false;
@@ -103,5 +106,4 @@ public class AccountsService implements IAccountsService {
         resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
         return resultMap;
     }
-
 }

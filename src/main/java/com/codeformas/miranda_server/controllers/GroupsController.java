@@ -39,7 +39,7 @@ public class GroupsController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -47,7 +47,7 @@ public class GroupsController {
                 .create();
 
         try {
-            resHashMap = this.groupsService.listAll();
+            resHashMap = this.groupsService.list(groups);
             continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
             if (continueHash) {
                 listGroups = (List<Groups>) resHashMap.get(ConstantMiranda.OBJECT);
@@ -82,7 +82,7 @@ public class GroupsController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -128,7 +128,7 @@ public class GroupsController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -136,7 +136,7 @@ public class GroupsController {
                 .create();
 
         try {
-            resHashMap = this.groupsService.saveOrUpdate(groups);
+            resHashMap = this.groupsService.saveUpdate(groups);
             continueHash = (boolean)resHashMap.get(ConstantMiranda.STATUS);
             if(continueHash){
                 respuestaJson = gson.toJson(groups, Groups.class);
@@ -174,7 +174,7 @@ public class GroupsController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {
             resHashMap = this.groupsService.delete(groups);

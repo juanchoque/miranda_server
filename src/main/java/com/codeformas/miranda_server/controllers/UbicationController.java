@@ -36,7 +36,7 @@ public class UbicationController {
         List<Ubication> listUbications = new ArrayList<Ubication>();
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -45,7 +45,7 @@ public class UbicationController {
 
         HashMap resHashMap = null;
         try {
-            resHashMap = this.ubicationService.listAll();
+            resHashMap = this.ubicationService.list(ubication);
             continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
             if (continueHash) {
                 listUbications = (List<Ubication>) resHashMap.get(ConstantMiranda.OBJECT);
@@ -85,10 +85,10 @@ public class UbicationController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {
-            resHashMap = ubicationService.saveOrUpdate(ubication);
+            resHashMap = ubicationService.saveUpdate(ubication);
             continueHash = (boolean)resHashMap.get(ConstantMiranda.STATUS);
             if(continueHash){
                 respuestaJson = gson.toJson(ubication, Ubication.class);
@@ -126,7 +126,7 @@ public class UbicationController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {
             resHashMap = ubicationService.delete(ubication);

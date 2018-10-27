@@ -21,7 +21,7 @@ public class UbicationService implements IUbicationService {
 
 
     @Override
-    public HashMap listAll() {
+    public HashMap list(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
@@ -45,14 +45,14 @@ public class UbicationService implements IUbicationService {
     }
 
     @Override
-    public HashMap getById(Long id) {
+    public HashMap getById(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
 
         Ubication ubication = null;
         try {
-            ubication = this.ubicationRepository.findOne(id);
+            ubication = this.ubicationRepository.findOne(((Ubication)o).getId());
             if(ubication != null){
                 resultMap.put(ConstantMiranda.OBJECT, ubication);
                 status = true;
@@ -69,12 +69,12 @@ public class UbicationService implements IUbicationService {
     }
 
     @Override
-    public HashMap saveOrUpdate(Ubication ubication) {
+    public HashMap saveUpdate(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = false;
         String messageTemp = "";
         try {
-            this.ubicationRepository.save(ubication);
+            this.ubicationRepository.save((Ubication) o);
             status = true;
         }catch (Exception er){
             status = false;
@@ -88,12 +88,12 @@ public class UbicationService implements IUbicationService {
     }
 
     @Override
-    public HashMap delete(Ubication ubication) {
+    public HashMap delete(Object o) {
         HashMap resultMap = new HashMap();
         boolean status = true;
         String messageTemp = "";
         try {
-            this.ubicationRepository.delete(ubication);
+            this.ubicationRepository.delete((Ubication) o);
             status = true;
         }catch (Exception er){
             status = false;
@@ -105,5 +105,4 @@ public class UbicationService implements IUbicationService {
 
         return resultMap;
     }
-
 }

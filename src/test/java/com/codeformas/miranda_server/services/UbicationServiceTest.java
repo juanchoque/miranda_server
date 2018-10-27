@@ -18,7 +18,7 @@ public class UbicationServiceTest {
 
     @Test
     public void listAll() {
-        iUbicationService.listAll();
+        iUbicationService.list(null);
     }
 
     @Test

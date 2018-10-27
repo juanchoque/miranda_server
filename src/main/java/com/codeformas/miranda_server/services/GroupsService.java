@@ -18,140 +18,16 @@ public class GroupsService implements IGroupsService {
 
     private IGroupAccountService groupAccountService;
 
+    private Groups rGroups = null;
+
+    private boolean found;
+
     @Autowired
     public GroupsService(GroupsRepository groupsRepository, IGroupAccountService groupAccountService) {
         this.groupsRepository = groupsRepository;
         this.groupAccountService = groupAccountService;
     }
 
-    @Override
-    public HashMap listAll() {
-        HashMap resultMap = new HashMap();
-        boolean status = false;
-        String messageTemp = "";
-
-        try {
-            List<Groups> listGroups = new ArrayList<>();
-            this.groupsRepository.findAll().forEach(listGroups::add); //fun with Java 8
-            if(listGroups != null){
-                resultMap.put(ConstantMiranda.OBJECT, listGroups);
-                status = true;
-            }
-        }catch (Exception er){
-            status = false;
-            messageTemp = er.getMessage().toString();
-        }
-
-        resultMap.put(ConstantMiranda.STATUS, status);
-        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
-        return resultMap;
-    }
-
-    @Override
-    public HashMap getById(Integer id) {
-        HashMap resultMap = new HashMap();
-        boolean status = false;
-        String messageTemp = "";
-
-        Groups groups = null;
-        try {
-            groups = this.groupsRepository.findOne(id);
-            if(groups != null){
-                resultMap.put(ConstantMiranda.OBJECT, groups);
-                status = true;
-            }
-        }catch (Exception er){
-            status = false;
-        }
-
-        resultMap.put(ConstantMiranda.STATUS, status);
-        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
-
-        return resultMap;
-    }
-
-    @Override
-    public HashMap saveOrUpdate(Groups groups) {
-        HashMap resultMap = new HashMap();
-        boolean status = false;
-        String messageTemp = "";
-
-        Groups rGroups = null;
-        try {
-            if(groups.getId() != null){
-                rGroups = this.groupsRepository.findOne(groups.getId());
-                if(rGroups != null){
-                    rGroups.setName(groups.getName());
-                    rGroups.setState(groups.getState());
-
-                    //delete groupsaccoint
-                    if(rGroups.getGroupAccountList() != null && groups.getGroupAccountList() != null){
-                        for(int i = 0;i < rGroups.getGroupAccountList().size();i++){
-                            GroupAccount rGroupAccount = rGroups.getGroupAccountList().get(i);
-                            boolean found = false;
-                            for(int j = 0;j < groups.getGroupAccountList().size();j++){
-                                GroupAccount groupAccount = groups.getGroupAccountList().get(j);
-                                if(rGroupAccount.getId() != null){
-                                    if(rGroupAccount.getId().equals(groupAccount.getId())){
-                                        found = true;
-                                    }
-                                }
-                            }
-                            if(!found){
-                                this.groupAccountService.delete(rGroupAccount);
-                            }
-                        }
-                    }
-
-                }
-            }
-            else{
-                rGroups = groups;
-            }
-
-            rGroups.getGroupAccountList().clear();
-            this.groupsRepository.save(rGroups);
-
-            for(int i = 0;i < groups.getGroupAccountList().size();i++){
-                GroupAccount groupAccount = groups.getGroupAccountList().get(i);
-                groupAccount.setGroups(rGroups);
-                groups.getGroupAccountList().set(i, groupAccount);
-                this.groupAccountService.saveOrUpdate(groupAccount);
-            }
-
-            resultMap.put(ConstantMiranda.OBJECT, rGroups);
-            status = true;
-
-        }catch (Exception er){
-            status = true;
-            messageTemp  = er.getMessage().toString();
-        }
-
-        resultMap.put(ConstantMiranda.STATUS, status);
-        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
-
-        return resultMap;
-    }
-
-    @Override
-    public HashMap delete(Groups groups) {
-        HashMap resultMap = new HashMap();
-        boolean status = false;
-        String messageTemp = "";
-        try {
-            this.groupsRepository.delete(groups);
-            resultMap.put(ConstantMiranda.OBJECT, groups);
-            status = true;
-        }catch (Exception er){
-            status = false;
-            messageTemp = er.getMessage().toString();
-        }
-
-        resultMap.put(ConstantMiranda.STATUS, status);
-        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
-
-        return resultMap;
-    }
 
     @Override
     public HashMap listAllByAcount(Accounts accounts) {
@@ -177,4 +53,134 @@ public class GroupsService implements IGroupsService {
         return resultMap;
     }
 
+    @Override
+    public HashMap list(Object o) {
+        HashMap resultMap = new HashMap();
+        boolean status = false;
+        String messageTemp = "";
+
+        try {
+            List<Groups> listGroups = new ArrayList<>();
+            this.groupsRepository.findAll().forEach(listGroups::add); //fun with Java 8
+            if(listGroups != null){
+                resultMap.put(ConstantMiranda.OBJECT, listGroups);
+                status = true;
+            }
+        }catch (Exception er){
+            status = false;
+            messageTemp = er.getMessage().toString();
+        }
+
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+        return resultMap;
+    }
+
+    @Override
+    public HashMap getById(Object o) {
+        HashMap resultMap = new HashMap();
+        boolean status = false;
+        String messageTemp = "";
+
+        Groups groups = null;
+        try {
+            groups = this.groupsRepository.findOne(((Groups)o).getId());
+            if(groups != null){
+                resultMap.put(ConstantMiranda.OBJECT, groups);
+                status = true;
+            }
+        }catch (Exception er){
+            status = false;
+        }
+
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
+        return resultMap;
+    }
+
+    @Override
+    public HashMap saveUpdate(Object o) {
+        HashMap resultMap = new HashMap();
+        boolean status = false;
+        String messageTemp = "";
+
+        Groups groups = (Groups) o;
+        this.rGroups = null;
+        try {
+            if(groups.getId() != null){
+                this.rGroups = this.groupsRepository.findOne(groups.getId());
+                if(this.rGroups != null){
+                    this.rGroups.setName(groups.getName());
+                    this.rGroups.setState(groups.getState());
+
+                    //delete groupsaccoint
+                    if(this.rGroups.getGroupAccountList() != null && groups.getGroupAccountList() != null){
+                        rGroups.getGroupAccountList().forEach(x ->{
+                            found = false;
+                            groups.getGroupAccountList().forEach(y ->{
+                                if(x.getId() != null){
+                                    if(x.getId().equals(y.getId())){
+                                        found = true;
+                                        return;
+                                    }
+                                }
+                            });
+                            if(!found){
+                                this.groupAccountService.delete(x);
+                            }
+                        });
+                    }
+
+                }
+            }
+            else{
+                this.rGroups = groups;
+            }
+
+            rGroups.getGroupAccountList().clear();
+            this.groupsRepository.save(this.rGroups);
+
+            if(groups.getGroupAccountList() != null){
+                groups.getGroupAccountList().forEach(x ->{
+                    x.setGroups(rGroups);
+                    this.groupAccountService.saveUpdate(x);
+                });
+            }
+
+            resultMap.put(ConstantMiranda.OBJECT, rGroups);
+            status = true;
+
+        }catch (Exception er){
+            status = true;
+            messageTemp  = er.getMessage().toString();
+        }
+
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
+        return resultMap;
+    }
+
+    @Override
+    public HashMap delete(Object o) {
+        HashMap resultMap = new HashMap();
+        boolean status = false;
+        String messageTemp = "";
+
+        Groups groups = (Groups) o;
+        try {
+            this.groupsRepository.delete(groups);
+            resultMap.put(ConstantMiranda.OBJECT, groups);
+            status = true;
+        }catch (Exception er){
+            status = false;
+            messageTemp = er.getMessage().toString();
+        }
+
+        resultMap.put(ConstantMiranda.STATUS, status);
+        resultMap.put(ConstantMiranda.MESSAGE, messageTemp);
+
+        return resultMap;
+    }
 }

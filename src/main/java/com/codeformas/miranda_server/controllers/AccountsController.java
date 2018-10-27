@@ -29,9 +29,9 @@ public class AccountsController {
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> listAccounts(@RequestBody Accounts accounts) {
-        String respuestaJson = "";
         HttpStatus httpStatus = HttpStatus.OK;
         ResponseEntity<Object> response = null;
+        HashMap resHashMap = null;
 
         List<Accounts> listAccounts = new ArrayList<Accounts>();
 
@@ -40,15 +40,17 @@ public class AccountsController {
                 .setDateFormat(ConstantMiranda.FORMAT_DATE_YYYY_MM_DD_HH_MM_SS)
                 .create();
 
-        HashMap resHashMap = null;
+
         boolean continueHash = false;
+
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        String respuestaJson = "";
+
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {
-            System.out.println(">>>>>>>>>>>>>>>>>" + accountsService.listAll());
-            resHashMap = this.accountsService.listAll();
-            System.out.println(">>>>Esto es nulo>>>>>>>>" + resHashMap);
+            resHashMap = this.accountsService.list(accounts);
+
             continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
             if (continueHash) {
                 listAccounts = (List<Accounts>) resHashMap.get(ConstantMiranda.OBJECT);
@@ -92,10 +94,10 @@ public class AccountsController {
         HashMap resHashMap = null;
         boolean continueHash = false;
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {
-            resHashMap = this.accountsService.saveOrUpdate(accounts);
+            resHashMap = this.accountsService.saveUpdate(accounts);
             continueHash = (boolean)resHashMap.get(ConstantMiranda.STATUS);
             if(continueHash){
                 respuestaJson = gson.toJson(accounts, Accounts.class);
@@ -120,7 +122,6 @@ public class AccountsController {
     @ResponseBody
     @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> deleteAccounts(@RequestBody Accounts accounts) {
-        String respuestaJson = "";
         HttpStatus httpStatus = HttpStatus.OK;
 
         ResponseEntity<Object> response = null;
@@ -131,9 +132,13 @@ public class AccountsController {
                 .create();
 
         HashMap resHashMap = null;
+
         boolean continueHash = false;
+
         String messageHash = "";
-        UtilMiranda utilMiranda = new UtilMiranda();
+        String respuestaJson = "";
+
+        UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {
             resHashMap = this.accountsService.delete(accounts);
