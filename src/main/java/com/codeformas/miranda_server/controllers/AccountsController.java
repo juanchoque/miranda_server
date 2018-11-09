@@ -54,7 +54,6 @@ public class AccountsController {
 
         try {
             resHashMap = this.accountsService.list(accounts);
-
             continueHash = (boolean) resHashMap.get(ConstantMiranda.STATUS);
             if (continueHash) {
                 listAccounts = (List<Accounts>) resHashMap.get(ConstantMiranda.OBJECT);
@@ -87,7 +86,11 @@ public class AccountsController {
     @ResponseBody
     @RequestMapping(value="/add", method= RequestMethod.POST, produces=ConstantMiranda.APP_JSON)
     public ResponseEntity<Object> addAccounts(@RequestBody Accounts accounts) {
+        String messageHash = "";
         String respuestaJson = "";
+
+        boolean continueHash = false;
+
         HttpStatus httpStatus = HttpStatus.OK;
 
         ResponseEntity<Object> response = null;
@@ -96,8 +99,6 @@ public class AccountsController {
                 .create();
 
         HashMap resHashMap = null;
-        boolean continueHash = false;
-        String messageHash = "";
         UtilMiranda utilMiranda = UtilMiranda.getInstance();
 
         try {

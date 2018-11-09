@@ -10,6 +10,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static junit.framework.TestCase.assertNotNull;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -21,10 +25,16 @@ public class DatabaseTest {
     AccountsRepository accountsRepository;
 
     @Test
+    public void list(){
+        List<Accounts> listAccounts = new ArrayList<>();
+        this.accountsRepository.findAll().forEach(listAccounts::add); //fun with Java 8
+        listAccounts.forEach(x -> System.out.println(x.getId()));
+    }
+
+    @Test
     public void create(){
         Accounts accounts = new Accounts();
-        accounts.setId(12);
-        accounts.setName("Esta es una prueba");
+        accounts.setName("Esta es una @SpringBootTest");
         accountsRepository.save(accounts);
 
         assertNotNull(accounts);
