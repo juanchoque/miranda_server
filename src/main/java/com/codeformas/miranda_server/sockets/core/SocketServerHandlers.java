@@ -1,6 +1,11 @@
 package com.codeformas.miranda_server.sockets.core;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.codeformas.miranda_server.model.domain.Command;
+import com.codeformas.miranda_server.model.domain.Ubication;
+import com.codeformas.miranda_server.services.UbicationService;
+import com.codeformas.miranda_server.sockets.observer.Subject;
+import com.codeformas.miranda_server.sockets.observer.TrackerObserver;
 import com.codeformas.miranda_server.sockets.services.SocketServerService;
 import com.codeformas.miranda_server.util.InterpreterMiranda;
 import com.codeformas.miranda_server.util.StoreSocketSessions;
@@ -17,7 +22,13 @@ public class SocketServerHandlers extends IoHandlerAdapter{
     private static final Logger logger = LoggerFactory.getLogger(SocketServerHandlers.class);
 
     @Autowired
-    private SocketServerService socketServerService;
+    private Subject subject;
+
+    @Autowired
+    private InterpreterMiranda interpreterMiranda;
+
+    @Autowired
+    private UbicationService ubicationService;
 
     @Override
     public void sessionCreated(IoSession session) throws Exception {
@@ -37,20 +48,28 @@ public class SocketServerHandlers extends IoHandlerAdapter{
         logger.info(String.format("[SERVER] MESSAGE RECEIVED" + strMessge));
 
         try {
-            InterpreterMiranda interpreterMiranda = new InterpreterMiranda();
-            Command command = interpreterMiranda.decodeCommand(strMessge);
-            logger.debug(">>>>>>>>>>>>>" + command) ;
-            if(command != null){
-                if(command.getImei() != null){
-                    IoSession ioSession = StoreSocketSessions.appSessions.get(command.getImei());
+            Command command = this.interpreterMiranda.decodeCommand(strMessge);
+            if(command != null & command.getImei() != null){
+                TrackerObserver trackerObserver = new TrackerObserver(this.subject);
+                trackerObserver.setImei(command.getImei());
+                trackerObserver.setIoSession(session);
+                trackerObserver.add();//save session and data
 
-                    StoreSocketSessions.appSessions.put(command.getImei(), session);
+                //save in data base
+                /*try {
+                    Ubication ubication = new Ubication();
+                    ubication.setLongitude(command.getLongitude());
+                    ubication.setLatitude(command.getLatitude());
+                    ubication.setImei(command.getImei());
+                    this.ubicationService.saveUpdate(ubication);
+                }catch (Exception ex){
+                }*/
+                //end save
 
-                    socketServerService.processCommand(command, session);
-                }
+                this.subject.notifyAllObservers(command.getImei(), strMessge);
             }
-
         }catch (Exception err){
+            err.printStackTrace();
             logger.info("[SERVER] ERROR" + err.getStackTrace());
         }
 

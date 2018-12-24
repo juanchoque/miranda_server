@@ -30,16 +30,16 @@ public class SocketClientService implements ISocketClientService {
      * Create the TCPClient's instance
      */
     public SocketClientService() {
-        connector = new NioSocketConnector();
-        socketClientHandler   = new SocketClientHandlers();
+        this.connector = new NioSocketConnector();
+        this.socketClientHandler   = new SocketClientHandlers();
 
-        connector.getFilterChain().addLast("logger", new LoggingFilter());
-        connector.getFilterChain().addLast( "codec", new ProtocolCodecFilter(new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
+        this.connector.getFilterChain().addLast("logger", new LoggingFilter());
+        this.connector.getFilterChain().addLast( "codec", new ProtocolCodecFilter(new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
 
-        connector.setHandler(socketClientHandler);
+        this.connector.setHandler(this.socketClientHandler);
         SocketSessionConfig dcfg = (SocketSessionConfig) connector.getSessionConfig();
 
-        ConnectFuture connFuture = connector.connect(new InetSocketAddress(ConstantMiranda.IP_MINA, ConstantMiranda.MINA_PORT));
+        ConnectFuture connFuture = this.connector.connect(new InetSocketAddress(ConstantMiranda.IP_MINA, ConstantMiranda.MINA_PORT));
         connFuture.awaitUninterruptibly();
         session = connFuture.getSession();
 
@@ -87,7 +87,7 @@ public class SocketClientService implements ISocketClientService {
         resultMap.put("MESSAGE", messageTemp);
 
         // Delete session...
-        connector.dispose(true);
+        this.connector.dispose(true);
         logger.info("[>.. END SOCKET CLIENT"+ " CONTINUE: "+ continueMap);
 
         return resultMap;

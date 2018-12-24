@@ -26,6 +26,7 @@ public class SocketServerService implements ISocketServerService {
     private GroupAccountService groupAccountService;
 
     @Override
+    //update data
     public HashMap processCommand(Command command, IoSession session) {
         HashMap resultMap = new HashMap();
         String continueMap = "TRUE";
@@ -77,12 +78,12 @@ public class SocketServerService implements ISocketServerService {
 
                         break;
                     case ConstantMiranda.CMD_SMS:
-                        IoSession ioSession = StoreSocketSessions.appSessions.get(command.getImeiDest());
+                        /*IoSession ioSession = StoreSocketSessions.appSessions.get(command.getImeiDest());
                         System.out.println("-------------CMD_SMS-------------->" + ioSession);
                         if(ioSession != null){
                             result = gson.toJson(command);
                             ioSession.write(result);
-                        }
+                        }*/
                         break;
                     default:
                         break;

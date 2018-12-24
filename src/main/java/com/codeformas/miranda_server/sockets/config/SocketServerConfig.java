@@ -28,7 +28,8 @@ public class SocketServerConfig {
     @Bean(initMethod = "bind", destroyMethod = "unbind")
     public NioSocketAcceptor nioSocketAcceptor(SocketServerHandlers socketServerHandler, DefaultIoFilterChainBuilder defaultIoFilterChainBuilder) {
         NioSocketAcceptor nioSocketAcceptor = new NioSocketAcceptor();
-        nioSocketAcceptor.setDefaultLocalAddress(new InetSocketAddress(port));
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(port);
+        nioSocketAcceptor.setDefaultLocalAddress(inetSocketAddress);
         nioSocketAcceptor.setReuseAddress(true);
         nioSocketAcceptor.setFilterChainBuilder(defaultIoFilterChainBuilder);
         nioSocketAcceptor.setHandler(socketServerHandler);

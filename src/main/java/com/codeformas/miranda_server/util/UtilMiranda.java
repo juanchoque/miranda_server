@@ -1,7 +1,10 @@
 package com.codeformas.miranda_server.util;
 
 import com.codeformas.miranda_server.model.domain.MessageError;
+import com.codeformas.miranda_server.sockets.observer.Subject;
 import org.springframework.http.HttpStatus;
+
+import static com.codeformas.miranda_server.util.StoreSocketSessions.appSessions;
 
 public final class UtilMiranda {
     private static UtilMiranda utilMiranda;
@@ -26,4 +29,5 @@ public final class UtilMiranda {
 
         return messages;
     }
+
 }
