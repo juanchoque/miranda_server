@@ -1,5 +1,7 @@
 package com.codeformas.miranda_server.model.domain;
 
+import java.util.Date;
+
 public class Command {
     private String cmd;
     private String content;
@@ -7,6 +9,8 @@ public class Command {
     private Double longitude;
     private String imei;
     private String imeiDest;
+    private String state;
+    private Date dateTime;
 
     public String getImeiDest() {
         return imeiDest;
@@ -54,5 +58,21 @@ public class Command {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date dateTime) {
+        this.dateTime = dateTime;
     }
 }

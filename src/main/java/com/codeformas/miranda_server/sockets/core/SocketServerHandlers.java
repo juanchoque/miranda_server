@@ -50,6 +50,9 @@ public class SocketServerHandlers extends IoHandlerAdapter{
         try {
             Command command = this.interpreterMiranda.decodeCommand(strMessge);
             if(command != null & command.getImei() != null){
+
+                strMessge = this.interpreterMiranda.encodeCommand(command);
+
                 TrackerObserver trackerObserver = new TrackerObserver(this.subject);
                 trackerObserver.setImei(command.getImei());
                 trackerObserver.setIoSession(session);

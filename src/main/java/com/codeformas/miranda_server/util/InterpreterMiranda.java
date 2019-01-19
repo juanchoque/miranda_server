@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 public class InterpreterMiranda {
     public Command decodeCommand(String code){
@@ -17,6 +19,7 @@ public class InterpreterMiranda {
                         .setDateFormat(ConstantMiranda.FORMAT_DATE_YYYY_MM_DD_HH_MM_SS)
                         .create();
                 command = gson.fromJson(code, Command.class);
+                command.setDateTime(new Date());
             }
         }catch (Exception err){
             err.printStackTrace();
